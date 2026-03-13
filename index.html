@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AGRAV Designer — Personal WIG Concept Sandbox</title>
+<style>
+  :root{
+    --bg:#0c0f14;
+    --bg2:#091018;
+    --fg:#e8eef8;
+    --mut:#9db0c9;
+    --acc:#7fe8ff;
+    --ok:#9cff8a;
+    --warn:#ffd36b;
+    --bad:#ff7b7b;
+    --card:#121722;
+    --line:#233043;
+    --panelShadow:0 18px 40px rgba(0,0,0,.35);
+  }
+
+  *{
+    box-sizing:border-box;
+    font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  }
+
+  html,body{
+    margin:0;
+    min-height:100%;
+    background:
+      radial-gradient(1000px 420px at 50% 8%, rgba(255,186,120,.10), transparent 60%),
+      linear-gradient(180deg,#0b0f14,#091018);
+    color:var(--fg);
+    display:flex;
+    flex-direction:column;
+  }
+
+  header{
+    padding:18px 20px;
+    border-bottom:1px solid var(--line);
+    background:rgba(11,17,24,.92);
+    backdrop-filter: blur(8px);
+    position:sticky;
+    top:0;
+    z-index:20;
+  }
+
+  header h1{
+    margin:0;
+    font-size:18px;
+    letter-spacing:.5px;
+  }
+
+  header .sub{
+    font-size:12px;
+    color:var(--mut);
+    margin-top:4px;
+  }
+
+  main{
+    display:grid;
+    gap:14px;
+    grid-template-columns:360px 1fr;
+    padding:16px;
+    align-items:start;
+  }
+
+  @media (max-width:1040px){
+    main{ grid-template-columns:1fr; }
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+    box-shadow:var(--panelShadow);
+  }
+
+  .card h2{
+    margin:.2rem 0 1rem 0;
+    font-size:14px;
+    color:var(--acc);
+    letter-spacing:.4px;
+  }
+
+  .row{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:8px;
+    align-items:center;
+    margin:.45rem 0;
+  }
+
+  .row label{
+    font-size:12px;
+    color:var(--mut);
+  }
+
+  .row input[type=number]{
+    width:110px;
+    background:#0d131d;
+    color:var(--fg);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:8px;
+  }
+
+  .row input[type=range]{
+    width:100%;
+  }
+
+  .unit{
+    font-size:12px;
+    color:var(--mut);
+  }
+
+  .pill{
+    display:inline-block;
+    padding:2px 8px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    color:var(--mut);
+    font-size:11px;
+    margin-left:6px;
+  }
+
+  .grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  @media (max-width:760px){
+    .grid2{ grid-template-columns:1fr; }
+  }
+
+  .kpi{
+    background:#0b1118;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px;
+  }
+
+  .kpi .label{
+    font-size:11px;
+    color:var(--mut);
+  }
+
+  .kpi .value{
+    font-size:20px;
+    margin-top:6px;
+  }
+
+  .good{ color:var(--ok); }
+  .bad{ color:var(--bad); }
+  .warn{ color:var(--warn); }
+
+  .bar{
+    height:8px;
+    background:#0c1420;
+    border-radius:6px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    margin-top:8px;
+  }
+
+  .bar > span{
+    display:block;
+    height:100%;
+    background:linear-gradient(90deg,#39d0ff,#9efba7);
+  }
+
+  .vizshell{
+    margin-top:10px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 240px at 50% 4%, rgba(255,180,120,.12), transparent 60%),
+      linear-gradient(180deg,#12212a 0%, #0d1a24 26%, #0b141d 60%, #091018 100%);
+  }
+
+  .viztop{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    background:rgba(8,12,18,.55);
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+
+  .viztitle{
+    font-size:12px;
+    color:#dfe9f9;
+    font-weight:700;
+  }
+
+  .vizsub{
+    font-size:11px;
+    color:var(--mut);
+  }
+
+  .vizbadges{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  .badge{
+    font-size:11px;
+    color:#dbe8fb;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:999px;
+    padding:4px 8px;
+    background:rgba(255,255,255,.04);
+  }
+
+  .svgbox{
+    position:relative;
+    padding:8px;
+    height:440px;
+  }
+
+  @media (max-width:760px){
+    .svgbox{ height:360px; }
+  }
+
+  .svgbox svg{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+
+  .hint{
+    font-size:12px;
+    color:var(--mut);
+    line-height:1.5;
+  }
+
+  button{
+    background:#0f1926;
+    color:var(--fg);
+    border:1px solid var(--line);
+    padding:8px 10px;
+    border-radius:10px;
+    cursor:pointer;
+  }
+
+  button:hover{
+    border-color:#3a79ff;
+  }
+
+  .footer{
+    padding:12px 16px;
+    color:var(--mut);
+    border-top:1px solid var(--line);
+    margin-top:auto;
+  }
+
+  code{
+    background:#0c1420;
+    padding:2px 6px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>AGRAV Designer</h1>
+  <div class="sub">Advanced Ground-effect Ring Aerodynamic Vehicle — Personal WIG Concept Sandbox</div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>Input (Aerodynamic Parameters)</h2>
+
+    <div class="row">
+      <label>Total Mass (Pilot + Craft) <span class="pill">mass</span></label>
+      <div><input id="mass" type="number" value="120" min="60" max="300" step="1"> <span class="unit">kg</span></div>
+    </div>
+
+    <div class="row">
+      <label>Cruise Speed (Low Altitude WIG) <span class="pill">V</span></label>
+      <div><input id="speed" type="number" value="40" min="15" max="100" step="1"> <span class="unit">km/h</span></div>
+    </div>
+
+    <div class="row">
+      <label>Air Density <span class="pill">ρ</span></label>
+      <div><input id="rho" type="number" value="1.225" min="0.9" max="1.4" step="0.005"> <span class="unit">kg/m³</span></div>
+    </div>
+
+    <div class="row">
+      <label>Max Lift Coefficient <span class="pill">C<sub>L,max</sub></span></label>
+      <div><input id="cl" type="number" value="1.40" min="0.8" max="1.80" step="0.05"></div>
+    </div>
+
+    <div class="row">
+      <label>Ground Effect Boost <span class="pill">WIG Factor</span></label>
+      <div>
+        <input id="wig" type="range" value="1.5" min="1.0" max="1.8" step="0.1">
+        <span id="wigVal" class="unit">1.5×</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <label>Effective Lift Surface <span class="pill">S</span></label>
+      <div><input id="wing" type="number" value="5.4" min="1.0" max="15.0" step="0.1"> <span class="unit">m²</span></div>
+    </div>
+
+    <div class="row">
+      <label>Aspect Ratio <span class="pill">AR</span></label>
+      <div><input id="ar" type="number" value="2.8" min="1.0" max="8.0" step="0.1"></div>
+    </div>
+
+    <div class="row">
+      <label>Parasitic CdA <span class="pill">Area × Cd</span></label>
+      <div><input id="cda" type="number" value="0.36" min="0.15" max="1.00" step="0.01"> <span class="unit">m²</span></div>
+    </div>
+
+    <div class="row">
+      <label>Ducted Fan Efficiency <span class="pill">η<sub>p</sub></span></label>
+      <div><input id="eta" type="number" value="0.65" min="0.3" max="0.9" step="0.01"></div>
+    </div>
+
+    <hr style="border:0;border-top:1px solid var(--line);margin:10px 0">
+
+    <div class="row">
+      <label>Pitch / Roll Active Damp</label>
+      <div>
+        <input id="gyro" type="range" value="0.18" min="0" max="0.5" step="0.01">
+        <span id="gyroVal" class="unit">18% Stabilizer</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <label>Electrostatic Flow Control (AFC)</label>
+      <div>
+        <input id="ion" type="range" value="0.08" min="0" max="0.20" step="0.01">
+        <span id="ionVal" class="unit">+8% Boundary Layer</span>
+      </div>
+    </div>
+
+    <div class="hint">
+      <b>This is a conceptual engineering sandbox exploring personal-scale WIG vehicles.</b><br>
+      * Ducted thrust replaces sci-fi jet assumptions and is shown in the hundreds-of-newtons range.<br>
+      * AFC is treated as boundary-layer / separation control, not as magic lift or reactionless propulsion.<br>
+      * The vehicle is modeled as a low-altitude ground-effect craft, not a true stationary hover bike.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Output (Results / Visualization)</h2>
+
+    <div class="grid2">
+      <div class="kpi">
+        <div class="label">Req. Lift Surface (Low Altitude WIG)</div>
+        <div class="value" id="needS">— m²</div>
+        <div class="bar"><span id="barS" style="width:0%"></span></div>
+        <div class="hint" id="liftMargin">—</div>
+      </div>
+
+      <div class="kpi">
+        <div class="label">Req. Ducted Thrust</div>
+        <div class="value" id="needT">— N</div>
+        <div class="bar"><span id="barT" style="width:0%"></span></div>
+        <div class="hint" id="powerHint">—</div>
+      </div>
+
+      <div class="kpi">
+        <div class="label">Power Estimate (Shaft Input)</div>
+        <div class="value" id="powerKW">— kW</div>
+        <div class="hint">Includes high-bypass ducted fan efficiency (η<sub>p</sub>).</div>
+      </div>
+
+      <div class="kpi">
+        <div class="label">Stability / Trim Authority</div>
+        <div class="value" id="stab">Damp + AFC = —%</div>
+        <div class="hint">Represents control authority in low-altitude ground effect, not free hover stability.</div>
+      </div>
+    </div>
+
+    <div class="vizshell">
+      <div class="viztop">
+        <div>
+          <div class="viztitle">AGRAV — Low Altitude WIG Board</div>
+          <div class="vizsub">Ducted propulsion + electrostatic boundary-layer control</div>
+        </div>
+        <div class="vizbadges">
+          <div class="badge">Personal WIG</div>
+          <div class="badge">Ducted Fan</div>
+          <div class="badge">Concept Sandbox</div>
+        </div>
+      </div>
+
+      <div class="svgbox">
+        <svg viewBox="0 0 960 430" id="svg" aria-label="AGRAV WIG concept board">
+          <defs>
+            <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#0d141d"/>
+              <stop offset="100%" stop-color="#081018"/>
+            </linearGradient>
+            <linearGradient id="rimLine" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#42d6ff"/>
+              <stop offset="100%" stop-color="#38b7ff"/>
+            </linearGradient>
+            <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="5" result="b"/>
+              <feMerge>
+                <feMergeNode in="b"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+
+          <line x1="50" y1="320" x2="910" y2="320" stroke="rgba(255,255,255,.12)" />
+          <line x1="50" y1="268" x2="910" y2="268" stroke="rgba(120,190,240,.22)" stroke-dasharray="7 7"/>
+          <text x="54" y="260" fill="#8fa8c8" font-size="14">~0.8 m Low Altitude Ground Effect Region</text>
+
+          <ellipse id="hoverGlow" cx="490" cy="332" rx="225" ry="30" fill="rgba(70,180,255,.12)" filter="url(#softGlow)"/>
+          <ellipse id="shadow" cx="490" cy="332" rx="138" ry="16" fill="rgba(0,0,0,.38)"/>
+
+          <g id="frontRing" transform="translate(320 230)">
+            <circle cx="0" cy="0" r="70" fill="none" stroke="url(#rimLine)" stroke-width="10" filter="url(#softGlow)"/>
+            <circle cx="0" cy="0" r="60" fill="rgba(0,0,0,.3)"/>
+          </g>
+
+          <g id="rearRing" transform="translate(660 230)">
+            <circle cx="0" cy="0" r="74" fill="none" stroke="url(#rimLine)" stroke-width="10" filter="url(#softGlow)"/>
+            <circle cx="0" cy="0" r="64" fill="rgba(0,0,0,.3)"/>
+          </g>
+
+          <path id="bodyShell"
+                d="M306,218 C378,165 536,144 694,215 C645,255 555,291 462,296 C384,278 331,242 306,218 Z"
+                fill="url(#bodyGrad)"
+                stroke="rgba(150,220,255,.10)"
+                stroke-width="2"/>
+
+          <path d="M470,182 C486,177 506,177 523,182 C519,194 513,205 503,214 C487,212 474,206 464,196 C465,191 467,186 470,182 Z"
+                fill="rgba(0,0,0,.72)"/>
+
+          <g transform="translate(487 190)">
+            <ellipse cx="0" cy="-12" rx="13" ry="16" fill="rgba(8,12,18,.82)"/>
+            <path d="M-15,5 C-8,-10 8,-10 15,5 C12,17 10,26 10,36 C2,42 -2,42 -10,36 C-10,27 -12,17 -15,5 Z"
+                  fill="rgba(8,12,18,.82)"/>
+          </g>
+
+          <path id="afcGlow"
+                d="M358,248 C470,271 588,265 667,236"
+                fill="none"
+                stroke="#79ffcb"
+                stroke-width="4"
+                stroke-linecap="round"
+                filter="url(#softGlow)"/>
+
+          <text id="label2" x="26" y="34" fill="#d6e2f4" font-size="16">V=— km/h / WIG=—× / S=—</text>
+          <text id="label3" x="26" y="58" fill="#d6e2f4" font-size="16">Treq=— N / P≈— kW</text>
+        </svg>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+      <button id="presetLow">Preset: Conservative Low-Speed WIG</button>
+      <button id="presetCruise">Preset: Cruise WIG</button>
+      <button id="export">Export JSON</button>
+    </div>
+
+    <div class="hint" style="margin-top:10px">
+      <code>S_req = W / (0.5 · ρ · V² · C_L,eff · WIG)</code><br>
+      <code>D = D_par + D_ind</code>, where <code>D_par = 0.5 · ρ · V² · CdA</code><br>
+      <code>D_ind = W² / (0.5 · ρ · V² · π · AR · e)</code>, reduced by WIG<br>
+      <code>P_in ≈ (D · V) / η_p</code>
+    </div>
+  </section>
+</main>
+
+<div class="footer">
+  © DIMProductions — Engineering Concept Sandbox
+</div>
+
+<script>
+  const g = 9.80665;
+  const el = (id) => document.getElementById(id);
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+
+  const mass = el('mass');
+  const speed = el('speed');
+  const rho = el('rho');
+  const cl = el('cl');
+  const wig = el('wig');
+  const wing = el('wing');
+  const ar = el('ar');
+  const cda = el('cda');
+  const eta = el('eta');
+  const gyro = el('gyro');
+  const ion = el('ion');
+
+  const wigVal = el('wigVal');
+  const gyroVal = el('gyroVal');
+  const ionVal = el('ionVal');
+
+  const needS = el('needS');
+  const needT = el('needT');
+  const powerKW = el('powerKW');
+  const liftMargin = el('liftMargin');
+  const powerHint = el('powerHint');
+  const barS = el('barS');
+  const barT = el('barT');
+  const stab = el('stab');
+
+  const label2 = el('label2');
+  const label3 = el('label3');
+  const hoverGlow = el('hoverGlow');
+  const shadow = el('shadow');
+  const afcGlow = el('afcGlow');
+
+  function calc() {
+    const m = parseFloat(mass.value);
+    const V = parseFloat(speed.value) / 3.6;
+    const R = parseFloat(rho.value);
+    const CL = parseFloat(cl.value);
+    const WIG = parseFloat(wig.value);
+    const Sset = parseFloat(wing.value);
+    const AR = parseFloat(ar.value);
+    const CdA = parseFloat(cda.value);
+    const etaP = parseFloat(eta.value);
+    const gyroK = parseFloat(gyro.value);
+    const afcK = parseFloat(ion.value);
+
+    wigVal.textContent = WIG.toFixed(1) + '×';
+    gyroVal.textContent = Math.round(gyroK * 100) + '% Stabilizer';
+    ionVal.textContent = `+${Math.round(afcK * 100)}% Boundary Layer`;
+
+    const W = m * g;
+    const q = 0.5 * R * V * V;
+
+    const effectiveCL = CL * (1 + (afcK * 0.25));
+    const Sreq = W / Math.max(q * effectiveCL * WIG, 1e-9);
+
+    const Lcap = q * effectiveCL * WIG * Sset;
+    const margin = (Lcap - W) / W;
+
+    const e = 0.82;
+    const Dind = (W * W) / Math.max(q * Math.PI * AR * e, 1e-9) * (1 / WIG);
+    const Dpar = q * CdA;
+
+    let drag = Dpar + Dind;
+    drag = drag * (1 - clamp(afcK * 0.12, 0, 0.05));
+
+    const Treq = drag;
+    const Pshaft = (Treq * V) / Math.max(etaP, 0.01) / 1000;
+
+    needS.textContent = Sreq.toFixed(2) + ' m²';
+    needT.textContent = Treq.toFixed(0) + ' N';
+    powerKW.textContent = Pshaft.toFixed(1) + ' kW';
+    stab.textContent = `Damp + AFC = ${Math.round((gyroK + afcK) * 100)}%`;
+
+    if (margin >= 0.20) {
+      liftMargin.textContent = `Lift Margin +${(margin * 100).toFixed(0)}% (Ample)`;
+      liftMargin.className = 'hint good';
+    } else if (margin >= 0.00) {
+      liftMargin.textContent = `Lift Margin +${(margin * 100).toFixed(0)}%`;
+      liftMargin.className = 'hint';
+    } else if (margin >= -0.15) {
+      liftMargin.textContent = `Lift Deficit ${(-margin * 100).toFixed(0)}% (Needs more S / V / C_L / WIG)`;
+      liftMargin.className = 'hint warn';
+    } else {
+      liftMargin.textContent = `Lift Deficit ${(-margin * 100).toFixed(0)}% (Fail)`;
+      liftMargin.className = 'hint bad';
+    }
+
+    powerHint.textContent = `Drag ~ D_par=${Dpar.toFixed(0)} N, D_ind=${Dind.toFixed(0)} N`;
+
+    const sRatio = clamp(Sset / Math.max(Sreq, 1e-9), 0, 2.0);
+    barS.style.width = (Math.min(1.5, sRatio) / 1.5 * 100).toFixed(0) + '%';
+    barT.style.width = (clamp(Treq / 1500, 0, 1) * 100).toFixed(0) + '%';
+
+    label2.textContent = `V=${(V * 3.6).toFixed(0)} km/h / WIG=${WIG.toFixed(1)}× / S=${Sset.toFixed(1)} m²`;
+    label3.textContent = `Treq=${Treq.toFixed(0)} N / P≈${Pshaft.toFixed(1)} kW`;
+
+    const hoverRx = 185 + (WIG - 1.0) * 70 + (Sset - 5.0) * 8;
+    hoverGlow.setAttribute('rx', hoverRx.toFixed(1));
+    shadow.setAttribute('rx', (hoverRx * 0.60).toFixed(1));
+    afcGlow.setAttribute('opacity', clamp(afcK * 5, 0.15, 1).toFixed(2));
+  }
+
+  [
+    mass, speed, rho, cl, wig, wing, ar, cda, eta, gyro, ion
+  ].forEach(node => node.addEventListener('input', calc));
+
+  el('presetLow').onclick = () => {
+    mass.value = 120;
+    speed.value = 40;
+    rho.value = 1.225;
+    cl.value = 1.55;
+    wig.value = 1.6;
+    wing.value = 5.8;
+    ar.value = 2.8;
+    cda.value = 0.38;
+    eta.value = 0.65;
+    gyro.value = 0.22;
+    ion.value = 0.10;
+    calc();
+  };
+
+  el('presetCruise').onclick = () => {
+    mass.value = 120;
+    speed.value = 70;
+    rho.value = 1.225;
+    cl.value = 1.10;
+    wig.value = 1.3;
+    wing.value = 4.6;
+    ar.value = 3.2;
+    cda.value = 0.30;
+    eta.value = 0.75;
+    gyro.value = 0.10;
+    ion.value = 0.04;
+    calc();
+  };
+
+  el('export').onclick = () => {
+    const data = {
+      mass:+mass.value,
+      speed_kmh:+speed.value,
+      rho:+rho.value,
+      CL:+cl.value,
+      WIG:+wig.value,
+      effective_surface_m2:+wing.value,
+      AR:+ar.value,
+      CdA:+cda.value,
+      eta_ducted:+eta.value,
+      gyro_damp:+gyro.value,
+      active_flow_control:+ion.value,
+      g
+    };
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type:'application/json' }));
+    a.download = 'agrav_wig_params_v03.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  calc();
+</script>
+</body>
+</html>
